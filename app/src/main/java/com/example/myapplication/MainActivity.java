@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,10 @@ public class MainActivity extends AppCompatActivity {
     MediaRecorder mediaRecorder;
     public static String fileName = "recorded.3gp";
     String file = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + fileName;
-
+    private boolean isRecording=false;
+    private static ImageButton btnStop;
+    private static ImageButton btnRecord;
+    private static ImageButton btnPlay;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -37,6 +41,14 @@ public class MainActivity extends AppCompatActivity {
 //        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator);
 //        if (!dir.exists())
 //            dir.mkdirs();
+        btnStop =  findViewById(R.id.btnStop);
+        btnRecord =  findViewById(R.id.btnRecord);
+        btnPlay =  findViewById(R.id.btnPlay);
+
+        btnPlay.setEnabled(false);
+        btnStop.setEnabled(false);
+
+
         if (checkedPermissionsFromDevice()){
             textView = findViewById(R.id.textView);
             mediaRecorder = new MediaRecorder();
@@ -53,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             mediaRecorder.setOutputFile(file);
+            try {
+                mediaRecorder.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }else{
             requestPermission();
         }
@@ -101,25 +118,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void record() {
+        btnRecord.setEnabled(false);
+        btnStop.setEnabled(true);
+        btnPlay.setEnabled(false);
 
-        try {
-            mediaRecorder.prepare();
+        if(!isRecording) {
+//            try {
+//
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             mediaRecorder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            textView.setText("Audio recording .....");
+            isRecording=true;
         }
-        textView.setText("Audio recording .....");
 
     }
 
     private void stopAudio() {
-        textView.setText("Recording Stopped ...");
-        mediaRecorder.stop();
-        mediaRecorder.release();
+        btnRecord.setEnabled(true);
+        btnStop.setEnabled(false);
+        btnPlay.setEnabled(true);
 
+        if(isRecording){
+            textView.setText("Recording Stopped ...");
+            mediaRecorder.stop();
+//            mediaRecorder.release();
+            isRecording =false;
+        }
     }
 
     private void play() {
+//        btnRecord.setEnabled(true);
+//        btnStop.setEnabled(false);
+//        btnPlay.setEnabled(true);
+
         textView.setText("Playing recorded audio ...");
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
