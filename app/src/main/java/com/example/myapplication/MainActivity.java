@@ -25,12 +25,13 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     MediaRecorder mediaRecorder;
-    public static String fileName = "recorded.3gp";
-    String file = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + fileName;
+    public static String fileName1 = "recorded.3gp";
+    String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + fileName1;
     private boolean isRecording=false;
     private static ImageButton btnStop;
     private static ImageButton btnRecord;
     private static ImageButton btnPlay;
+    File file;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -51,25 +52,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (checkedPermissionsFromDevice()){
             textView = findViewById(R.id.textView);
-            mediaRecorder = new MediaRecorder();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-            File f = new File(file);
-            if (!f.exists()) {
+
+            file = new File(fileName);
+            if (!file.exists()) {
                 try {
-                    f.createNewFile();
+                    file.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            mediaRecorder = new MediaRecorder();
 
-            mediaRecorder.setOutputFile(file);
-            try {
-                mediaRecorder.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }else{
             requestPermission();
         }
@@ -77,6 +71,101 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void prepareMediaRecorder(MediaRecorder mediaRecorder, File file){
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+
+        if(Build.VERSION.SDK_INT < 26) {
+            mediaRecorder.setOutputFile(file.getAbsolutePath());
+        }else {
+            mediaRecorder.setOutputFile(file);
+        }
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void onClick(View v) {
+        if (v.getId() == R.id.btnRecord) {
+            //Record
+            record();
+        } else if (v.getId() == R.id.btnStop) {
+            //Stop
+            stopAudio();
+        } else if (v.getId() == R.id.btnPlay) {
+            //play
+            play();
+        }
+    }
+
+    private void record() {
+        btnRecord.setEnabled(false);
+        btnStop.setEnabled(true);
+        btnPlay.setEnabled(false);
+
+        if(!isRecording) {
+//            try {
+//
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            prepareMediaRecorder(mediaRecorder,file);
+            mediaRecorder.start();
+
+            textView.setText("Audio recording .....");
+            isRecording=true;
+        }
+    }
+
+    private void stopAudio() {
+        btnRecord.setEnabled(true);
+        btnStop.setEnabled(false);
+        btnPlay.setEnabled(true);
+
+        if(isRecording){
+            textView.setText("Recording Stopped ...");
+            mediaRecorder.stop();
+//            mediaRecorder.release();
+            isRecording =false;
+        }
+    }
+
+    private void play() {
+//        btnRecord.setEnabled(true);
+//        btnStop.setEnabled(false);
+//        btnPlay.setEnabled(true);
+
+        textView.setText("Playing recorded audio ...");
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(fileName);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+///////////////////////////////////////////PERMISSIONS/////////////////////////////////////////////////////////////////////////////////
     private void requestPermission() {
         ActivityCompat.requestPermissions(this,new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -104,76 +193,6 @@ public class MainActivity extends AppCompatActivity {
         return write_external_storage_result== PackageManager.PERMISSION_GRANTED && read_external_storage==PackageManager.PERMISSION_GRANTED && record_audio_result==PackageManager.PERMISSION_GRANTED;
     }
 
-    public void onClick(View v) {
-        if (v.getId() == R.id.btnRecord) {
-            //Record
-            record();
-        } else if (v.getId() == R.id.btnStop) {
-            //Stop
-            stopAudio();
-        } else if (v.getId() == R.id.btnPlay) {
-            //play
-            play();
-        }
-    }
-
-    private void record() {
-        btnRecord.setEnabled(false);
-        btnStop.setEnabled(true);
-        btnPlay.setEnabled(false);
-
-        if(!isRecording) {
-//            try {
-//
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            mediaRecorder.start();
-
-            textView.setText("Audio recording .....");
-            isRecording=true;
-        }
-
-    }
-
-    private void stopAudio() {
-        btnRecord.setEnabled(true);
-        btnStop.setEnabled(false);
-        btnPlay.setEnabled(true);
-
-        if(isRecording){
-            textView.setText("Recording Stopped ...");
-            mediaRecorder.stop();
-//            mediaRecorder.release();
-            isRecording =false;
-        }
-    }
-
-    private void play() {
-//        btnRecord.setEnabled(true);
-//        btnStop.setEnabled(false);
-//        btnPlay.setEnabled(true);
-
-        textView.setText("Playing recorded audio ...");
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(file);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
 
 
 
