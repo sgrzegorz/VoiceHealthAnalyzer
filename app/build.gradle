@@ -7,8 +7,8 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.myapplication"
-        minSdkVersion 22
+        applicationId "pl.edu.agh.im.voicehealthanalyzer"
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"

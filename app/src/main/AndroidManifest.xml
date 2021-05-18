@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myapplication">
+    package="pl.edu.agh.im.voicehealthanalyzer">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
-        <activity android:name=".MainActivity">
+        <activity android:name="pl.edu.agh.im.voicehealthanalyzer.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
