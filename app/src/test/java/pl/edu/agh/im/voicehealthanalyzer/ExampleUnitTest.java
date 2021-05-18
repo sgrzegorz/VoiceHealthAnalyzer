@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package pl.edu.agh.im.voicehealthanalyzer;
 
 import org.junit.Test;
 

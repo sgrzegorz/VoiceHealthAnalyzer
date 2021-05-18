@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Voice Health Analyzer</string>
+    <string name="intro_text">Record your voice:</string>
 </resources>
