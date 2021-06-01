@@ -23,10 +23,10 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MediaRecorder mediaRecorder;
+    private WavAudioRecorder recorder;
 
-    public static String fileNameBase = "recorded.3gp";
-    private String audioFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + fileNameBase;
+    private static final String fileNameBase = "recording.wav";
+    private final String audioFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + fileNameBase;
 
     private boolean isRecording = false;
 
@@ -64,27 +64,9 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            mediaRecorder = new MediaRecorder();
+            recorder = WavAudioRecorder.getInstance();
         } else {
             requestPermission();
-        }
-    }
-
-    private void prepareMediaRecorder(MediaRecorder mediaRecorder, File file) {
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-
-        if (Build.VERSION.SDK_INT < 26) {
-            mediaRecorder.setOutputFile(file.getAbsolutePath());
-        } else {
-            mediaRecorder.setOutputFile(file);
-        }
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -104,8 +86,9 @@ public class MainActivity extends AppCompatActivity {
         btnPlay.setEnabled(false);
 
         if (!isRecording) {
-            prepareMediaRecorder(mediaRecorder, file);
-            mediaRecorder.start();
+            recorder.setOutputFile(audioFileName);
+            recorder.prepare();
+            recorder.start();
 
             Toast.makeText(this, "Audio recording...", Toast.LENGTH_SHORT).show();
             isRecording = true;
@@ -118,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
         btnPlay.setEnabled(true);
 
         if (isRecording) {
-            mediaRecorder.stop();
+            recorder.stop();
+            recorder.reset();
             Toast.makeText(this, "Recording stopped...", Toast.LENGTH_SHORT).show();
             isRecording = false;
         }
@@ -156,5 +140,13 @@ public class MainActivity extends AppCompatActivity {
         return Arrays.stream(permissions).allMatch(perm ->
                 ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
         );
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (recorder != null) {
+            recorder.release();
+        }
     }
 }
