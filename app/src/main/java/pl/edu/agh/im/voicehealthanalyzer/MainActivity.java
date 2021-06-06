@@ -3,8 +3,6 @@ package pl.edu.agh.im.voicehealthanalyzer;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -77,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             stopAudio();
         } else if (v.getId() == R.id.btnPlay) {
             play();
+        } else if(v.getId() == R.id.btnClassify){
+            classify();
         }
     }
 
@@ -118,6 +118,16 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+
+    private void classify() {
+        Toast.makeText(this, "Classifying recorded audio...", Toast.LENGTH_SHORT).show();
+
+
+
     }
 
     //////////////////////////////////////////PERMISSIONS//////////////////////////////////////////
