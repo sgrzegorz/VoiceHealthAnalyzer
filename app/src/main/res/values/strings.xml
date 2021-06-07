@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Voice Health Analyzer</string>
-    <string name="intro_text">Record your voice:</string>
+    <string name="intro_text">Record yourself while describing the above picture</string>
+    <string name="image_to_describe">Image to describe</string>
 </resources>
