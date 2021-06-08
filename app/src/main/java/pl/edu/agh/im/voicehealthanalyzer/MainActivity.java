@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isRecording = false;
 
+    private ImageView imageView;
     private ImageButton btnStop;
     private ImageButton btnRecord;
     private ImageButton btnPlay;
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setImageResource(new RandomPicturePicker().getRandomPictureId());
 
         btnStop = findViewById(R.id.btnStop);
         btnRecord = findViewById(R.id.btnRecord);
